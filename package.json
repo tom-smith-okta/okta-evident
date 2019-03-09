@@ -1,5 +1,5 @@
 {
-  "name": "okta-arkose",
+  "name": "okta-evident",
   "version": "1.0.0",
   "main": "app.js",
   "scripts": {
@@ -9,9 +9,15 @@
   "license": "ISC",
   "dependencies": {
     "@okta/okta-auth-js": "^2.3.1",
+    "@okta/okta-sdk-nodejs": "^1.2.0",
     "body-parser": "^1.18.3",
     "dotenv": "^6.2.0",
     "express": "^4.16.4",
+    "express-session": "^1.15.6",
+    "fs": "0.0.1-security",
+    "install": "^0.12.2",
+    "morgan": "^1.9.1",
+    "npm": "^6.9.0",
     "request": "^2.88.0"
   },
   "repository": {

@@ -12,8 +12,10 @@
 <!-- bootstrap -->
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 
-<!-- okta authn sdk -->
+<!-- <script src="/js/okta-auth-js.min.js"></script>
+ -->
 <script src="https://ok1static.oktacdn.com/assets/js/sdk/okta-auth-js/2.0.1/okta-auth-js.min.js" type="text/javascript"></script>
+
 
 <!-- css -->
 
@@ -25,25 +27,72 @@
 
 <script>
 
-function update_ui_logged_in(login) {
 
-  $("#register").hide()
+window.onload = function() {
+
+
+
+  // authClient.session.get()
+  // .then(function(session) {
+  //   console.log("the user has an okta session")
+  //   console.dir(session)
+  // })
+  // .catch(function(err) {
+  //   console.log("no okta session")
+  // })
+};
+
+function register() {
+
+  var data = {
+    firstName: $("#firstName").val(),
+    lastName: $("#lastName").val(),
+    email: $("#email").val(),
+    password: $("#password").val(),
+
+  }
+
+  var settings = {
+    "async": true,
+    "crossDomain": true,
+    "url": "{{APP_HOME}}/register",
+    "method": "POST",
+    "headers": {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      "cache-control": "no-cache"
+    },
+    "processData": false,
+    "data": JSON.stringify(data)
+  }
+
+  $.ajax(settings).done(function (response) {
+
+    console.log(response)
+
+
+    authClient.session.setCookieAndRedirect(response.sessionToken);
+
+
+
+    // if (response.status === "SUCCESS") {
+    //   // authClient.session.setCookieAndRedirect(response.sessionToken)
+    // }
+    // else {
+    //   console.log("something went wrong.")
+    //   console.log(response)
+    // }
+  })
+}
+
+
+function update_ui(login) {
+
+  $("#login").hide()
 
   $("#welcome").show()
 
-  $("#log_out").show()
-
   $("#un").html(login)
-
-}
-
-function update_ui_logged_out() {
-
-  $("#register").show()
-
-  $("#log_in").show()
-
-  $("#welcome").hide()
 
 }
 
@@ -70,14 +119,6 @@ function update_ui_logged_out() {
         <a class="nav-link" href="/records">Review your records</span></a>
       </li>
 
-      <li class="nav-item active">
-        <a class="nav-link" href="#" onclick="log_out()" style="display:none" id="log_out">Log out</span></a>
-      </li>
-
-      <li class="nav-item active">
-        <a class="nav-link" href="/log_in" style="display:none" id="log_in">Log in</span></a>
-      </li>
-
     </ul>
   </div>
 </nav>
@@ -88,41 +129,41 @@ function update_ui_logged_out() {
 
     <div id = "welcome" style = "display: none">
       <p>It's great to have you here, <span id="un" style="background: yellow"></span>!</p>
+      <p><i>see developer console for Okta session object</i></p>
+
+      <button id="logout" onclick="log_out()">log out</button>
+
     </div>
 
-    <div id = "register" style = "display: none">
+    <div id = "register">
       <p class="lead" style="margin-top:20px">Please create an account to get started.</p>
-
-      <p class="lead" style="margin-top:10px">Or, you already have an account, just click on "log in" in the top menu.</p>
 
       <div class="row">
         <div class="col-sm-9 col-md-7 col-lg-5 mx-auto">
           <div class="card card-signin my-5">
             <div class="card-body">
-                <form action="/register" method="POST">
+<!--               <h5 class="card-title text-center">Sign up</h5>
+ -->
                 <div class="form-label-group">
-                  <input type="text" id="firstName" class="form-control" placeholder="first name" autofocus name="firstName">
+                  <input type="text" id="firstName" class="form-control" placeholder="first name" autofocus>
                   <label for="fname">First Name</label>
                 </div>
 
                 <div class="form-label-group">
-                  <input type="text" id="lastName" class="form-control" placeholder="last name" name="lastName">
+                  <input type="text" id="lastName" class="form-control" placeholder="last name">
                   <label for="fname">Last Name</label>
                 </div>
 
                 <div class="form-label-group">
-                  <input type="text" id="email" class="form-control" placeholder="email" name="email">
+                  <input type="text" id="email" class="form-control" placeholder="email" autofocus>
                   <label for="email">email</label>
                 </div>
 
                 <div class="form-label-group">
-                  <input type="password" id="password" class="form-control" placeholder="password" name="password">
+                  <input type="password" id="password" class="form-control" placeholder="password">
                   <label for="password">password</label>
                 </div>
-
-                <input type="submit">
-
-                </form>
+               <button class="btn btn-lg btn-primary btn-block text-uppercase" id="register" onclick="register()">Sign up</button>
             </div>
           </div>
       </div>
@@ -133,74 +174,21 @@ function update_ui_logged_out() {
 
 <script>
 
-  var config = {
+    var config = {
     // The URL for your Okta organization
     url: '{{OKTA_TENANT}}'
-  }
-
+  };
   var authClient = new OktaAuth(config)
 
-  authClient.session.get()
-  .then(function(session) {
-
-    console.dir(session)
-
-    if (session.status === "ACTIVE") {
-
-      console.log("the user has an okta session")
-
-      update_ui_logged_in(session.login)
-    }
-    else {
-
-      console.log("the user does not have an okta session")
-
-      update_ui_logged_out()
-
+  authClient.session.exists()
+  .then(function(exists) {
+    if (exists) {
+      // logged in
+      console.log("logged in")
+    } else {
+      console.log("not logged in")
     }
   })
-  .catch(function(err) {
-      console.log("the user does not have an okta session")
-
-      update_ui_logged_out()
-  })
-
-  function log_out() {
-
-    authClient.signOut()
-    .then(function() {
-      console.log('successfully logged out')
-
-      var settings = {
-        "async": true,
-        "crossDomain": true,
-        "url": "{{APP_HOME}}/log_out",
-        "method": "POST",
-        "headers": {
-          "Accept": "application/json",
-          "Content-Type": "application/json",
-          "cache-control": "no-cache"
-        },
-        "processData": false
-      }
-
-      $.ajax(settings).done(function (response) {
-
-        console.log(response)
-
-        if (response.msg === "success") {
-          location.reload(true)
-        }
-        else {
-          console.log("could not log the user out.")
-        }
-      })
-    })
-    .fail(function(err) {
-      console.error(err);
-    });
-
-  }
 
 
 </script>
