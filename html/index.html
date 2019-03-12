@@ -174,8 +174,6 @@ var signIn = new OktaSignIn({
     }
   },
   features: {
-    // Used to enable registration feature on the widget.
-    // https://github.com/okta/okta-signin-widget#feature-flags
      registration: true // REQUIRED
   }
 })
@@ -243,11 +241,9 @@ else {
 }
 
 function log_out() {
-
   signIn.tokenManager.clear()
 
   location.replace('{{REDIRECT_URI}}')
-
 }
 
 function get_schedule() {

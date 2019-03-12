@@ -8,11 +8,7 @@ const express = require('express')
 
 const fs = require('fs')
 
-const OktaAuth = require('@okta/okta-auth-js')
-
-const okta = require('@okta/okta-sdk-nodejs')
-
-var morgan = require('morgan')
+// var morgan = require('morgan')
 
 const request = require('request')
 
@@ -36,21 +32,11 @@ app.listen(port, function () {
 
 ///////////////////////////////////////////////////
 
-// Okta clients
-
-const authClient = new OktaAuth({ url: process.env.OKTA_TENANT })
-
-const client = new okta.Client({
-	orgUrl: process.env.OKTA_TENANT,
-	token: process.env.OKTA_API_TOKEN,
-	requestExecutor: new okta.DefaultRequestExecutor() // Will be added by default in 2.0
-});
-
-//////////////////////////////////////////////////
-
 var records_img_url = "https://s3.amazonaws.com/tom-smith-okta-demo-images/evident/medical_record500.jpg"
 
 var schedule_img_url = "https://s3.amazonaws.com/tom-smith-okta-demo-images/evident/calendar300.png"
+
+///////////////////////////////////////////////////
 
 app.get('/', function (req, res) {
 
@@ -62,8 +48,6 @@ app.get('/', function (req, res) {
 		page = page.replace(/{{OKTA_TENANT}}/g, process.env.OKTA_TENANT)
 		page = page.replace(/{{REDIRECT_URI}}/g, process.env.REDIRECT_URI)
 		page = page.replace(/{{CLIENT_ID}}/g, process.env.CLIENT_ID)
-
-		page = page.replace(/{{APP_HOME}}/g, process.env.APP_HOME)
 
 		res.send(page)
 	})
@@ -149,61 +133,5 @@ app.post('/schedule', function (req, res) {
 		else {
 			res.json({html: "<p>sorry, you need to be logged in to schedule an appointment.</p>"})
 		}
-	})
-})
-
-app.post('/register', function (req, res) {
-
-	console.log("the request body is: ")
-
-	console.dir(req.body)
-
-	const newUser = {
-		profile: {
-			firstName: req.body.firstName,
-			lastName: req.body.lastName,
-			email: req.body.email,
-			login: req.body.email
-		},
-		credentials: {
-			password : {
-				value: req.body.password
-			}
-		}
-	}
-
-	client.createUser(newUser)
-	.then(user => {
-		console.log('Created user', user)
-
-		authClient.signIn({
-			username: req.body.email,
-			password: req.body.password
-		})
-		.then(function(transaction) {
-			if (transaction.status === 'SUCCESS') {
-				console.log("the transaction is: ")
-				console.dir(transaction)
-
-				console.log("the sessionToken is: " + transaction.sessionToken)
-
-				var session_cookie_uri = process.env.OKTA_TENANT + "/login/sessionCookieRedirect?token=" + transaction.sessionToken + "&redirectUrl=" + process.env.APP_HOME
-
-				req.session.authn = 1
-				req.session.user_id = transaction.user.id
-
-				console.log("the value of req.session is: " + req.session.authn)
-
-				console.log("the user id is: " + req.session.user_id)
-
-				res.redirect(session_cookie_uri)
-
-			} else {
-				throw 'We cannot handle the ' + transaction.status + ' status';
-			}
-		})
-		.fail(function(err) {
-			console.error(err);
-		})
 	})
 })
