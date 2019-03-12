@@ -241,6 +241,8 @@ else {
 }
 
 function log_out() {
+  sessionStorage.clear();
+
   signIn.tokenManager.clear()
 
   location.replace('{{REDIRECT_URI}}')
