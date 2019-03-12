@@ -86,8 +86,8 @@ app.post('/records', function (req, res) {
 		if (obj.active === true) {
 			console.log("the id token is active.")
 
-			if (obj.proofed) {
-				if (obj.proofed === "true") {
+			if (obj.evidentid_verification) {
+				if (obj.evidentid_verification === true) {
 					res.json({html: "<img src='" + records_img_url + "'>"})
 					return
 				}
