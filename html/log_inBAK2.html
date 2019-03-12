@@ -80,60 +80,61 @@
 //   }
 // })
 
-// var config = {
-//   // The URL for your Okta organization
-//   url: '{{OKTA_TENANT}}',
-//   clientId: '{{CLIENT_ID}}',
-//   redirectUri: '{{REDIRECT_URI}}',
-//   tokenManager: {
-//     storage: 'sessionStorage'
-//   }
-// }
+var config = {
+  // The URL for your Okta organization
+  url: '{{OKTA_TENANT}}',
+  clientId: '{{CLIENT_ID}}',
+  redirectUri: '{{REDIRECT_URI}}',
+  tokenManager: {
+    storage: 'sessionStorage'
+  }
+}
 
-// var authClient = new OktaAuth(config)
+var authClient = new OktaAuth(config)
 
-// authClient.tokenManager.get('idToken')
-// .then(function(token) {
-//   if (token) {
-//     // Token is valid
-//     console.log(token);
-//   } else {
-//     console.log("the token has expired.")
+authClient.tokenManager.get('idToken')
+.then(function(token) {
+  if (token) {
+    // Token is valid
+    console.log(token);
+  } else {
+    console.log("the token has expired.")
 
-//     var sessionToken = "{{sessionToken}}"
+    var sessionToken = "{{sessionToken}}"
 
 
-//     if (sessionToken != "{{sessionToken}}") {
+    if (sessionToken != "{{sessionToken}}") {
 
-//       authClient.token.getWithoutPrompt({
-//         sessionToken: '',
-//         scopes: [
-//           'openid',
-//           'email',
-//           'profile'
-//         ],
-//         state: '8rFzn3MH5q',
-//         nonce: '51GePTswrm',
-//         // Use a custom IdP for social authentication
-//         // idp: '0oa62b57p7c8PaGpU0h7'
-//        })
-//       .then(function(tokenOrTokens) {
+      authClient.token.getWithoutPrompt({
+        sessionToken: '',
+        scopes: [
+          'openid',
+          'email',
+          'profile'
+        ],
+        state: '8rFzn3MH5q',
+        nonce: '51GePTswrm',
+        // Use a custom IdP for social authentication
+        // idp: '0oa62b57p7c8PaGpU0h7'
+       })
+      .then(function(tokenOrTokens) {
 
-//         console.log("got a token")
-//         // manage token or tokens
-//       })
-//       .catch(function(err) {
-//         console.dir(err)
-//         // handle OAuthError
-//       });
-//     }
-//   }
-// })
-// .catch(function(err) {
-//   // OAuth Error
-//   console.error(err);
-// });
+        console.log("got a token")
+        // manage token or tokens
+      })
+      .catch(function(err) {
+        console.dir(err)
+        // handle OAuthError
+      });
+    }
+  }
+})
+.catch(function(err) {
+  // OAuth Error
+  console.error(err);
+});
 
+///////////////////////////////////////////////////////////
 
 var signIn = new OktaSignIn({
   baseUrl: '{{OKTA_TENANT}}',
@@ -145,10 +146,8 @@ var signIn = new OktaSignIn({
     responseType: 'id_token',
 
     display: 'page'
-  },
-  sessionToken: '20111a-EnzYhjeXRKdr5ozvUjCCd9zQ5kes8C--EWy7TwsDOeT8zQ_C'
+  }
 });
-
 
 // signIn.showSignInToGetTokens({
 //   clientId: '{{myClientId}}',

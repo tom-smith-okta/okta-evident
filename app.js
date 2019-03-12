@@ -6,8 +6,6 @@ const bodyParser = require('body-parser')
 
 const express = require('express')
 
-var session = require('express-session')
-
 const fs = require('fs')
 
 const OktaAuth = require('@okta/okta-auth-js')
@@ -32,8 +30,6 @@ app.use(express.static('public'))
 
 app.use(morgan('combined'))
 
-app.use(session({ secret: process.env.SECRET_PHRASE, cookie: { maxAge: 60000 }}))
-
 app.listen(port, function () {
 	console.log('App listening on port ' + port + '...');
 })
@@ -52,6 +48,10 @@ const client = new okta.Client({
 
 //////////////////////////////////////////////////
 
+var records_img_url = "https://s3.amazonaws.com/tom-smith-okta-demo-images/evident/medical_record500.jpg"
+
+var schedule_img_url = "https://s3.amazonaws.com/tom-smith-okta-demo-images/evident/calendar300.png"
+
 app.get('/', function (req, res) {
 
 	fs.readFile('html/index.html', "utf8", (err, page) => {
@@ -60,69 +60,96 @@ app.get('/', function (req, res) {
 		}
 
 		page = page.replace(/{{OKTA_TENANT}}/g, process.env.OKTA_TENANT)
+		page = page.replace(/{{REDIRECT_URI}}/g, process.env.REDIRECT_URI)
+		page = page.replace(/{{CLIENT_ID}}/g, process.env.CLIENT_ID)
+
 		page = page.replace(/{{APP_HOME}}/g, process.env.APP_HOME)
 
 		res.send(page)
 	})
 })
 
-app.get('/schedule', function (req, res) {
+app.post('/records', function (req, res) {
 
-	if (req.session.authn === 1) {
-		res.send("you are authenticated!")
-	}
+	console.log("the request body is: ")
+	console.dir(req.body)
 
-	else {
-		res.send("you are NOT authenticated!")
-	}
-
-	// fs.readFile('html/index.html', "utf8", (err, page) => {
-	// 	if (err) {
-	// 		console.log("error reading the index.html file")
-	// 	}
-
-	// 	page = page.replace(/{{OKTA_TENANT}}/g, process.env.OKTA_TENANT)
-	// 	page = page.replace(/{{APP_HOME}}/g, process.env.APP_HOME)
-
-	// 	res.send(page)
-	// })
-})
-
-app.get('/log_in', function (req, res) {
-
-	fs.readFile('html/log_in.html', "utf8", (err, page) => {
-		if (err) {
-			console.log("error reading the index.html file")
+	var options = {
+		method: 'POST',
+		url: process.env.OKTA_TENANT + '/oauth2/v1/introspect',
+		qs: {
+			token: req.body.id_token,
+			token_type_hint: 'id_token',
+			client_id: process.env.CLIENT_ID,
+			client_secret: process.env.CLIENT_SECRET
+		},
+		headers: {
+			'cache-control': 'no-cache',
+			'Content-Type': 'application/x-www-form-urlencoded',
+			Accept: 'application/json'
 		}
+	}
 
-		page = page.replace(/{{OKTA_TENANT}}/g, process.env.OKTA_TENANT)
-		page = page.replace(/{{APP_HOME}}/g, process.env.APP_HOME)
+	request(options, function (error, response, body) {
+		if (error) throw new Error(error)
 
-		res.send(page)
+		console.log(body)
+
+		var obj = JSON.parse(body)
+
+		var errMsg = "<p>sorry, for your security, you need to go through the identity proofing process before seeing your medical records.</p>"
+
+		if (obj.active === true) {
+			console.log("the id token is active.")
+
+			if (obj.proofed) {
+				if (obj.proofed === "true") {
+					res.json({html: "<img src='" + records_img_url + "'>"})
+					return
+				}
+			}
+		}
+		res.json({html: errMsg})
 	})
-
-	// fs.readFile('html/index.html', "utf8", (err, page) => {
-	// 	if (err) {
-	// 		console.log("error reading the index.html file")
-	// 	}
-
-	// 	page = page.replace(/{{OKTA_TENANT}}/g, process.env.OKTA_TENANT)
-	// 	page = page.replace(/{{APP_HOME}}/g, process.env.APP_HOME)
-
-	// 	res.send(page)
-	// })
 })
 
-app.post('/log_out', function (req, res) {
 
-	req.session.authn = 0
+app.post('/schedule', function (req, res) {
 
-	req.session.user_id = ""
+	console.log("the request body is: ")
+	console.dir(req.body)
 
-	console.log("killed the server-side session.")
+	var options = {
+		method: 'POST',
+		url: process.env.OKTA_TENANT + '/oauth2/v1/introspect',
+		qs: {
+			token: req.body.id_token,
+			token_type_hint: 'id_token',
+			client_id: process.env.CLIENT_ID,
+			client_secret: process.env.CLIENT_SECRET
+		},
+		headers: {
+			'cache-control': 'no-cache',
+			'Content-Type': 'application/x-www-form-urlencoded',
+			Accept: 'application/json'
+		}
+	}
 
-	res.json({msg: "success"})
+	request(options, function (error, response, body) {
+		if (error) throw new Error(error)
 
+		console.log(body)
+
+		var obj = JSON.parse(body)
+
+		if (obj.active === true) {
+			console.log("the id token is active.")
+			res.json({html: "<img src='" + schedule_img_url + "'>"})
+		}
+		else {
+			res.json({html: "<p>sorry, you need to be logged in to schedule an appointment.</p>"})
+		}
+	})
 })
 
 app.post('/register', function (req, res) {

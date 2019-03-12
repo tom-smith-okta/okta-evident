@@ -1,0 +1,135 @@
+<html>
+
+<head>
+
+<title>Okta + Evident - log in</title>
+
+<!-- javascript -->
+
+<!-- jquery -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<!-- bootstrap -->
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+
+<!-- okta login widget -->
+<script
+  src="https://ok1static.oktacdn.com/assets/js/sdk/okta-signin-widget/2.14.0/js/okta-sign-in.min.js"
+  type="text/javascript"></script>
+
+<!-- css -->
+
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+
+<link href="https://getbootstrap.com/docs/4.2/examples/starter-template/starter-template.css" rel="stylesheet" type="text/css">
+
+<link
+  href="https://ok1static.oktacdn.com/assets/js/sdk/okta-signin-widget/2.14.0/css/okta-sign-in.min.css"
+  type="text/css"
+  rel="stylesheet"/>
+
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+  <a class="navbar-brand" href="/">Atko Health</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+    <ul class="navbar-nav mr-auto">
+
+      <li class="nav-item active">
+        <a class="nav-link" href="/">Home</span></a>
+      </li>
+
+    </ul>
+  </div>
+</nav>
+
+<main role="main" class="container">
+  <div class="starter-template">
+
+    <div id = "widget-container"></div>
+
+  </div>
+</main>
+
+<script>
+
+var signIn = new OktaSignIn({
+  baseUrl: '{{OKTA_TENANT}}',
+  clientId: '{{CLIENT_ID}}',
+  redirectUri: '{{REDIRECT_URI}}',
+  authParams: {
+    responseType: 'id_token',
+    scopes: ['openid', 'email', 'profile', 'address', 'phone'],
+    display: 'page'
+  },
+
+  registration: {
+    parseSchema: function(schema, onSuccess, onFailure) {
+       // handle parseSchema callback
+       onSuccess(schema);
+    },
+    preSubmit: function (postData, onSuccess, onFailure) {
+       // handle preSubmit callback
+       onSuccess(postData);
+    },
+    postSubmit: function (response, onSuccess, onFailure) {
+        // handle postsubmit callback
+       onSuccess(response);
+    }
+  },
+  features: {
+    // Used to enable registration feature on the widget.
+    // https://github.com/okta/okta-signin-widget#feature-flags
+     registration: true // REQUIRED
+  }
+})
+
+// First, check to see if we have any tokens in the url
+if (signIn.token.hasTokensInUrl()) {
+  console.log("found at least one token in the url.")
+
+  signIn.token.parseTokensFromUrl(
+    function success(res) {
+      console.dir(res)
+      signIn.tokenManager.add('id_token', res)
+      // signIn.tokenManager.add('access_token', res[1])
+
+      console.log("the id token object is: ")
+
+      console.dir(signIn.tokenManager.get("id_token"))
+    },
+    function error(err) {
+      // handleError(err);
+    }
+  )
+}
+else {
+  console.log("no id token in the url.")
+  if (signIn.tokenManager.get('id_token')) {
+    console.log("there is an id token in the token manager")
+  }
+  else {
+    console.log("no id token in the okta token manager.")
+    signIn.renderEl(
+      {el: '#widget-container'},
+      function success(res) {
+        if (res.status === "SUCCESS") {
+          res.session.setCookieAndRedirect('{{REDIRECT_URI}}')
+        }
+      },
+      function(err) { console.err(err)}
+    )
+  }
+}
+
+</script>
+
+</body>
+
+</html>
