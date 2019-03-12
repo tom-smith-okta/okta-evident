@@ -241,7 +241,9 @@ else {
 }
 
 function log_out() {
-  sessionStorage.clear();
+  localStorage.clear()
+
+  sessionStorage.clear()
 
   signIn.tokenManager.clear()
 
