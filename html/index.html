@@ -247,7 +247,13 @@ function log_out() {
 
   signIn.tokenManager.clear()
 
-  location.replace('{{REDIRECT_URI}}')
+  signIn.session.close(function (err) {
+    if (err) {
+      // The user has not been logged out, perform some error handling here.
+      return;
+    }
+    location.replace('{{REDIRECT_URI}}')
+  })
 }
 
 function get_schedule() {
