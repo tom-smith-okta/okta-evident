@@ -24,7 +24,7 @@ app.use(bodyParser.urlencoded({ extended: false }))
 
 app.use(express.static('public'))
 
-app.use(morgan('combined'))
+// app.use(morgan('combined'))
 
 app.listen(port, function () {
 	console.log('App listening on port ' + port + '...');
@@ -96,7 +96,6 @@ app.post('/records', function (req, res) {
 		res.json({html: errMsg})
 	})
 })
-
 
 app.post('/schedule', function (req, res) {
 
