@@ -4,6 +4,8 @@
 
 <title>Okta + Evident</title>
 
+<link rel="shortcut icon" href="https://www.okta.com/sites/all/themes/developer/favicon.ico" type="image/vnd.microsoft.icon" />
+
 <!-- css -->
 
 <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" type="text/css">
@@ -11,9 +13,9 @@
 <link href="https://getbootstrap.com/docs/4.2/examples/starter-template/starter-template.css" rel="stylesheet" type="text/css">
 
 <link
-  href="https://ok1static.oktacdn.com/assets/js/sdk/okta-signin-widget/2.14.0/css/okta-sign-in.min.css"
-  type="text/css"
-  rel="stylesheet"/>
+	href="https://ok1static.oktacdn.com/assets/js/sdk/okta-signin-widget/2.14.0/css/okta-sign-in.min.css"
+	type="text/css"
+	rel="stylesheet"/>
 
 <!-- javascript -->
 
@@ -25,40 +27,42 @@
 
 <!-- okta login widget -->
 <script
-  src="https://ok1static.oktacdn.com/assets/js/sdk/okta-signin-widget/2.14.0/js/okta-sign-in.min.js"
-  type="text/javascript"></script>
+	src="https://ok1static.oktacdn.com/assets/js/sdk/okta-signin-widget/2.14.0/js/okta-sign-in.min.js"
+	type="text/javascript"></script>
 
 <script>
 
 function close_window(id_name) {
-  $("#" + id_name).hide()
+	$("#" + id_name).hide()
 }
 
 function update_ui_logged_in(username, has_been_proofed) {
 
-  $("#welcome").show()
+	$("#welcome").show()
 
-  $("#log_out").show()
+	$("#log_out").show()
 
-  $("#un").html(username)
+	$("#un").html(username)
 
-  $("#schedule_link").attr("class", "nav-item active")
+	$("#schedule_link").attr("class", "nav-item active")
 
-  if (has_been_proofed) {
-    $("#records_link").attr("class", "nav-item active")
-  }
-  else {
-    $("#id_proof_instrux").show()
-  }
+	$("#records_link").attr("class", "nav-item active")
+
+	// if (has_been_proofed) {
+	// 	$("#records_link").attr("class", "nav-item active")
+	// }
+	// else {
+	// 	$("#id_proof_instrux").show()
+	// }
 }
 
 function update_ui_logged_out() {
 
-  $("#authn").show()
+	$("#authn").show()
 
-  $("#id_proof_instrux").hide()
+	$("#id_proof_instrux").hide()
 
-  $("#welcome").hide()
+	$("#welcome").hide()
 
 }
 
@@ -69,229 +73,230 @@ function update_ui_logged_out() {
 <body>
 
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
-  <a class="navbar-brand" href="/">Atko Health</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-    <span class="navbar-toggler-icon"></span>
-  </button>
+	<a class="navbar-brand" href="/">Atko Health</a>
+	<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+		<span class="navbar-toggler-icon"></span>
+	</button>
 
-  <div class="collapse navbar-collapse" id="navbarsExampleDefault">
-    <ul class="navbar-nav mr-auto">
+	<div class="collapse navbar-collapse" id="navbarsExampleDefault">
+		<ul class="navbar-nav mr-auto">
 
-      <li class="nav-item disabled" id = "schedule_link">
-        <a class="nav-link" href="#" onclick="get_schedule()">Schedule an appointment</span></a>
-      </li>
+			<li class="nav-item disabled" id = "schedule_link">
+				<a class="nav-link" href="#" onclick="get_schedule()">Schedule an appointment</span></a>
+			</li>
 
-      <li class="nav-item disabled" id = "records_link">
-        <a class="nav-link" href="#" onclick="get_records()">Review your records</span></a>
-      </li>
+			<li class="nav-item disabled" id = "records_link">
+				<a class="nav-link" href="#" onclick="get_records()">Review your records</span></a>
+			</li>
 
-      <li class="nav-item active">
-        <a class="nav-link" href="#" onclick="log_out()" style="display:none" id="log_out">Log out</span></a>
-      </li>
+			<li class="nav-item active">
+				<a class="nav-link" href="#" onclick="log_out()" style="display:none" id="log_out">Log out</span></a>
+			</li>
 
-      <li class="nav-item active">
-        <a class="nav-link" href="/log_in" style="display:none" id="log_in">Log in</span></a>
-      </li>
+			<li class="nav-item active">
+				<a class="nav-link" href="/log_in" style="display:none" id="log_in">Log in</span></a>
+			</li>
 
-    </ul>
-  </div>
+		</ul>
+	</div>
 </nav>
 
 <main role="main" class="container">
-  <div class="starter-template">
+	<div class="starter-template">
 
-    <div class="row">
+		<div class="row">
 
-      <div class="col">
+			<div class="col">
 
-        <h2>Welcome to Atko Health Care!</h2>
+				<h2>Welcome to Atko Health Care!</h2>
 
-        <div id = "welcome" style = "display: none">
-          <p>It's great to have you here, <span id="un" style="background: yellow"></span>!</p>
-        </div>
+				<div id = "welcome" style = "display: none">
+					<p>It's great to have you here, <span id="un" style="background: yellow"></span>!</p>
+				</div>
 
-        <div id = "id_proof_instrux" style = "display:none">
-          <p><b>Next step</b>: check your email to confirm your identity!</p>
-          <p>Once your identity is confirmed, the "Review your records" link above will become active.</p>
-          <p>While you're waiting for your identity to be confirmed, why not schedule your first appointment?</p>
-          <p>(But please start the identity confirmation process first!)</p>
-        </div>
+				<div id = "id_proof_instrux" style = "display:none">
+					<p><b>Next step</b>: check your email to confirm your identity!</p>
+					<p>(We want to make sure that this is really you, and not an impostor!)</p>
+					<p>Once your identity is confirmed, the "Review your records" link above will become active.</p>
+					<p>While you're waiting for your identity to be confirmed, why not schedule your first appointment?</p>
+					<p>(But please start the identity confirmation process first!)</p>
+				</div>
 
-        <div id = "authn" style = "display: none">
-          <p class="lead" style="margin-top:20px">Please sign in to get started.</p>
+				<div id = "authn" style = "display: none">
+					<p class="lead" style="margin-top:20px">Please sign in to get started.</p>
 
-          <p class="lead" style="margin-top:10px">Or, if this is your first time visiting us, please click on the "sign up" link below to create an account.</p>
+					<p class="lead" style="margin-top:10px">Or, if this is your first time visiting us, please click on the "sign up" link below to create an account.</p>
 
-          <div id = "widget-container"></div>
-        </div>
-      </div>
+					<div id = "widget-container"></div>
+				</div>
+			</div>
 
-      <div class="col" id = "ui">
-        <div id = "calendar" style="display: none; border: 1px solid black; border-radius: 5px; padding: 5px">
-          <button type="button" class="btn btn-info" onclick="close_window('calendar')">close</button>
-          <p><b>Schedule an appointment</b></p>
-          <p>Which date works best for you?</p>
-          <div id = "calendar_content"></div>
-        </div>
+			<div class="col" id = "ui">
+				<div id = "calendar" style="display: none; border: 1px solid black; border-radius: 5px; padding: 5px">
+					<button type="button" class="btn btn-info" onclick="close_window('calendar')">close</button>
+					<p><b>Schedule an appointment</b></p>
+					<p>Which date works best for you?</p>
+					<div id = "calendar_content"></div>
+				</div>
 
-        <div id = "records" style="display: none; border: 1px solid black; border-radius: 5px; padding: 5px">
-          <button type="button" class="btn btn-info" onclick="close_window('records')">close</button>
-          <p><b>Review your records</b></p>
-          <div id = "records_content"></div>
-        </div>
+				<div id = "records" style="display: none; border: 1px solid black; border-radius: 5px; padding: 5px">
+					<button type="button" class="btn btn-info" onclick="close_window('records')">close</button>
+					<p><b>Review your records</b></p>
+					<div id = "records_content"></div>
+				</div>
 
-      </div>
+			</div>
 
-    </div>
+		</div>
 
-  </div>
+	</div>
 </main>
 
 <script>
 
 var signIn = new OktaSignIn({
-  baseUrl: '{{OKTA_TENANT}}',
-  clientId: '{{CLIENT_ID}}',
-  redirectUri: '{{REDIRECT_URI}}',
-  authParams: {
-    responseType: 'id_token',
-    scopes: ['openid', 'email', 'profile', 'address', 'phone'],
-    display: 'page'
-  },
+	baseUrl: '{{OKTA_TENANT}}',
+	clientId: '{{CLIENT_ID}}',
+	redirectUri: '{{REDIRECT_URI}}',
+	authParams: {
+		responseType: 'id_token',
+		scopes: ['openid', 'email', 'profile', 'address', 'phone'],
+		display: 'page'
+	},
 
-  registration: {
-    parseSchema: function(schema, onSuccess, onFailure) {
-       // handle parseSchema callback
-       onSuccess(schema);
-    },
-    preSubmit: function (postData, onSuccess, onFailure) {
-       // handle preSubmit callback
-       onSuccess(postData);
-    },
-    postSubmit: function (response, onSuccess, onFailure) {
-        // handle postsubmit callback
-       onSuccess(response);
-    }
-  },
-  features: {
-     registration: true // REQUIRED
-  }
+	registration: {
+		parseSchema: function(schema, onSuccess, onFailure) {
+			 // handle parseSchema callback
+			 onSuccess(schema);
+		},
+		preSubmit: function (postData, onSuccess, onFailure) {
+			 // handle preSubmit callback
+			 onSuccess(postData);
+		},
+		postSubmit: function (response, onSuccess, onFailure) {
+				// handle postsubmit callback
+			 onSuccess(response);
+		}
+	},
+	features: {
+		 registration: true
+	}
 })
 
 // First, check to see if we have any tokens in the url
 if (signIn.token.hasTokensInUrl()) {
-  console.log("found at least one token in the url.")
+	console.log("found at least one token in the url.")
 
-  signIn.token.parseTokensFromUrl(
-    function success(res) {
-      signIn.tokenManager.add('id_token', res)
+	signIn.token.parseTokensFromUrl(
+		function success(res) {
+			signIn.tokenManager.add('id_token', res)
 
-      location.replace('{{REDIRECT_URI}}')
-    },
-    function error(err) {
-      console.dir(err)
-    }
-  )
+			location.replace('{{REDIRECT_URI}}')
+		},
+		function error(err) {
+			console.dir(err)
+		}
+	)
 }
 else {
-  console.log("no id token in the url.")
+	console.log("no id token in the url.")
 
-  signIn.tokenManager.on('expired', function (key, expiredToken) {
-    console.log('Token with key', key, ' has expired:')
-    console.log(expiredToken)
-    signIn.tokenManager.remove('key')
-  })
+	signIn.tokenManager.on('expired', function (key, expiredToken) {
+		console.log('Token with key', key, ' has expired:')
+		console.log(expiredToken)
+		signIn.tokenManager.remove('key')
+	})
 
-  if (signIn.tokenManager.get('id_token')) {
+	if (signIn.tokenManager.get('id_token')) {
 
-    var obj = signIn.tokenManager.get('id_token')
+		var obj = signIn.tokenManager.get('id_token')
 
-    console.log("there is an id token in the token manager")
+		console.log("there is an id token in the token manager")
 
-    console.dir(obj)
+		console.dir(obj)
 
-    var has_been_proofed = false
+		var has_been_proofed = false
 
-    if (obj.claims.proofed) { // user profile has a value for "proofed"
+		if (obj.claims.proofed) { // user profile has a value for "proofed"
 
-      if (obj.claims.proofed === "true") {
-        console.log("the user has been proofed.")
+			if (obj.claims.proofed === "true") {
+				console.log("the user has been proofed.")
 
-        has_been_proofed = true
-      }
-    }
+				has_been_proofed = true
+			}
+		}
 
-    update_ui_logged_in(obj.claims.given_name, has_been_proofed)
-  }
-  else {
-    console.log("no id token in the okta token manager.")
+		update_ui_logged_in(obj.claims.given_name, has_been_proofed)
+	}
+	else {
+		console.log("no id token in the okta token manager.")
 
-    update_ui_logged_out()
+		update_ui_logged_out()
 
-    signIn.renderEl(
-      {el: '#widget-container'},
-      function success(res) {
-        if (res.status === "SUCCESS") {
-          res.session.setCookieAndRedirect('{{REDIRECT_URI}}')
-        }
-      },
-      function(err) { console.dir(err)}
-    )
-  }
+		signIn.renderEl(
+			{el: '#widget-container'},
+			function success(res) {
+				if (res.status === "SUCCESS") {
+					res.session.setCookieAndRedirect('{{REDIRECT_URI}}')
+				}
+			},
+			function(err) { console.dir(err)}
+		)
+	}
 }
 
 function log_out() {
-  localStorage.clear()
+	localStorage.clear()
 
-  sessionStorage.clear()
+	sessionStorage.clear()
 
-  signIn.tokenManager.clear()
+	signIn.tokenManager.clear()
 
-  signIn.session.close(function (err) {
-    if (err) {
-      // The user has not been logged out, perform some error handling here.
-      return;
-    }
-    location.replace('{{REDIRECT_URI}}')
-  })
+	signIn.session.close(function (err) {
+		if (err) {
+			// The user has not been logged out, perform some error handling here.
+			return;
+		}
+		location.replace('{{REDIRECT_URI}}')
+	})
 }
 
 function get_schedule() {
 
-  if (signIn.tokenManager.get('id_token')) {
-    var obj = signIn.tokenManager.get('id_token')
-    var id_token = obj.idToken
+	if (signIn.tokenManager.get('id_token')) {
+		var obj = signIn.tokenManager.get('id_token')
+		var id_token = obj.idToken
 
-    $.post( "/schedule", { id_token: id_token }, "json")
-    .done(function( data ) {
-      console.dir(data)
-      $("#calendar_content").html(data.html)
-      $("#calendar").show()
-    })
-  }
-  else {
-    $("#calendar_content").html("<button type='button' class='btn btn-warning'>Please sign in first!</button>")
-    $("#calendar").show()
-  }
+		$.post( "/schedule", { id_token: id_token }, "json")
+		.done(function( data ) {
+			console.dir(data)
+			$("#calendar_content").html(data.html)
+			$("#calendar").show()
+		})
+	}
+	else {
+		$("#calendar_content").html("<button type='button' class='btn btn-warning'>Please sign in first!</button>")
+		$("#calendar").show()
+	}
 }
 
 function get_records() {
 
-  if (signIn.tokenManager.get('id_token')) {
-    var obj = signIn.tokenManager.get('id_token')
-    var id_token = obj.idToken
+	if (signIn.tokenManager.get('id_token')) {
+		var obj = signIn.tokenManager.get('id_token')
+		var id_token = obj.idToken
 
-    $.post( "/records", { id_token: id_token }, "json")
-    .done(function( data ) {
-      console.dir(data)
-      $("#records_content").html(data.html)
-      $("#records").show()
-    })
-  }
-  else {
-    $("#records_content").html("<button type='button' class='btn btn-warning'>Please sign in first!</button>")
-    $("#records").show()
-  }
+		$.post( "/records", { id_token: id_token }, "json")
+		.done(function( data ) {
+			console.dir(data)
+			$("#records_content").html(data.html)
+			$("#records").show()
+		})
+	}
+	else {
+		$("#records_content").html("<button type='button' class='btn btn-warning'>Please sign in first!</button>")
+		$("#records").show()
+	}
 }
 
 </script>
