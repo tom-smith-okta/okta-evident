@@ -88,12 +88,16 @@ app.post('/records', function (req, res) {
 
 			console.dir(obj)
 
-			if (obj.evidentid_verification) {
-				if (obj.evidentid_verification === true) {
-					res.json({html: "<img src='" + records_img_url + "'>"})
-					return
-				}
-			}
+			res.json({html: "<img src='" + records_img_url + "'>"})
+
+			return
+
+			// if (obj.evidentid_verification) {
+			// 	if (obj.evidentid_verification === true) {
+			// 		res.json({html: "<img src='" + records_img_url + "'>"})
+			// 		return
+			// 	}
+			// }
 		}
 		res.json({html: errMsg})
 	})
