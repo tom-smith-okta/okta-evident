@@ -46,14 +46,13 @@ function update_ui_logged_in(username, has_been_proofed) {
 
 	$("#schedule_link").attr("class", "nav-item active")
 
-	$("#records_link").attr("class", "nav-item active")
-
-	// if (has_been_proofed) {
-	// 	$("#records_link").attr("class", "nav-item active")
-	// }
-	// else {
-	// 	$("#id_proof_instrux").show()
-	// }
+	if (has_been_proofed) {
+		$("#records_link").attr("class", "nav-item active")
+	}
+	else {
+		$("#id_proof_instrux").show()
+	}
+	poll();
 }
 
 function update_ui_logged_out() {
@@ -245,20 +244,23 @@ else {
 	}
 }
 
-function log_out() {
-	localStorage.clear()
+function get_records() {
 
-	sessionStorage.clear()
+	if (signIn.tokenManager.get('id_token')) {
+		var obj = signIn.tokenManager.get('id_token')
+		var id_token = obj.idToken
 
-	signIn.tokenManager.clear()
-
-	signIn.session.close(function (err) {
-		if (err) {
-			// The user has not been logged out, perform some error handling here.
-			return;
-		}
-		location.replace('{{REDIRECT_URI}}')
-	})
+		$.post( "/records", { id_token: id_token }, "json")
+		.done(function( data ) {
+			console.dir(data)
+			$("#records_content").html(data.html)
+			$("#records").show()
+		})
+	}
+	else {
+		$("#records_content").html("<button type='button' class='btn btn-warning'>Please sign in first!</button>")
+		$("#records").show()
+	}
 }
 
 function get_schedule() {
@@ -280,24 +282,59 @@ function get_schedule() {
 	}
 }
 
-function get_records() {
+function log_out() {
+	localStorage.clear()
 
-	if (signIn.tokenManager.get('id_token')) {
-		var obj = signIn.tokenManager.get('id_token')
-		var id_token = obj.idToken
+	sessionStorage.clear()
 
-		$.post( "/records", { id_token: id_token }, "json")
-		.done(function( data ) {
-			console.dir(data)
-			$("#records_content").html(data.html)
-			$("#records").show()
-		})
-	}
-	else {
-		$("#records_content").html("<button type='button' class='btn btn-warning'>Please sign in first!</button>")
-		$("#records").show()
-	}
+	signIn.tokenManager.clear()
+
+	signIn.session.close(function (err) {
+		if (err) {
+			// The user has not been logged out, perform some error handling here.
+			return;
+		}
+		location.replace('{{REDIRECT_URI}}')
+	})
 }
+
+// poll web server to see if the "review your records" link
+// should be lit up
+// poll every 5 seconds up to 5 minutes
+
+function poll() {
+
+	var i = 0;
+	var intervalId = setInterval(function(){
+
+		if (i === 60) {
+			clearInterval(intervalId);
+		}
+
+		if (signIn.tokenManager.get('id_token')) {
+			var obj = signIn.tokenManager.get('id_token')
+			var id_token = obj.idToken
+
+			$.post( "/poll", { id_token: id_token }, "json")
+			.done(function( data ) {
+				console.dir(data)
+
+				if (data.status) {
+
+					clearInterval(intervalId);
+
+					$("#records_link").attr("class", "nav-item active")
+				}
+			})
+		}
+
+		console.log(i);
+
+		i++;
+
+	}, 5000);
+}
+
 
 </script>
 
